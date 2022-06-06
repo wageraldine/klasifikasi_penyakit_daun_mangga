@@ -57,6 +57,7 @@ def upload_file():
             result = myModel.predict(test_image)
             image_src = '/'+UPLOAD_FOLDER+'/'+filename
             results = []
+            answer = ""
             if result[0][0] == 1 :
                 answer = "<div class='col text-center'><img width=150 height=150 src='"+image_src+"' class=img-'thumbnail'/><h5>Daun terdeteksi penyakit Antrachnose "+str(result[0][0])+"</h5></div>"
             elif result[0][1] == 1 :
