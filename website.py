@@ -21,20 +21,6 @@ def allowed_file(filename):
 
 UPLOAD_FOLDER = 'static/files/'
 
-def load_model_from_file():
-    # Setup the machine learning session
-    mySession = tf.compat.v1.keras.backend.get_session()
-    set_session(mySession)
-    myModel = load_model('model_penyakit_daun_mangga_adam.h5')
-    myGraph = tf.compat.v1.get_default_graph()
-    return (mySession,myModel,myGraph)
-
-(mySession,myModel,myGraph) = load_model_from_file()
-    
-app.config['SESSION'] = mySession
-app.config['MODEL'] = myModel
-app.config['GRAPH'] = myGraph
-
 app.config['SECRET_KEY'] = 'super secret key'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 # 16 MB upload limit
@@ -67,23 +53,18 @@ def upload_file():
             test_image = image.img_to_array(test_image)
             test_image = np.expand_dims(test_image, axis=0)
             
-            mySession = app.config['SESSION']
-            myModel = app.config['MODEL']
-            myGraph = app.config['GRAPH']
-            with myGraph.as_default():
-                set_session(mySession)
-                myModel = load_model('model_penyakit_daun_mangga_adam.h5')
-                result = myModel.predict(test_image)
-                image_src = '/'+UPLOAD_FOLDER+'/'+filename
-                results = []
-                if result[0][0] == 1 :
-                    answer = "<div class='col text-center'><img width=150 height=150 src='"+image_src+"' class=img-'thumbnail'/><h5>Daun terdeteksi penyakit Antrachnose "+str(result[0][0])+"</h5></div>"
-                elif result[0][1] == 1 :
-                    answer = "<div class='col text-center'><img width=150 height=150 src='"+image_src+"' class=img-'thumbnail'/><h5>Daun terdeteksi penyakit Black Shooty "+str(result[0][1])+"</h5></div>"
-                elif result[0][2] == 1 :
-                    answer = "<div class='col text-center'><img width=150 height=150 src='"+image_src+"' class=img-'thumbnail'/><h5>Daun mangga sehat "+str(result[0][2])+"</h5></div>"
-                results.append(answer)
-                return render_template('index.html', len=len(results), results=results)            
+            myModel = load_model('model_penyakit_daun_mangga_adam.h5')
+            result = myModel.predict(test_image)
+            image_src = '/'+UPLOAD_FOLDER+'/'+filename
+            results = []
+            if result[0][0] == 1 :
+                answer = "<div class='col text-center'><img width=150 height=150 src='"+image_src+"' class=img-'thumbnail'/><h5>Daun terdeteksi penyakit Antrachnose "+str(result[0][0])+"</h5></div>"
+            elif result[0][1] == 1 :
+                answer = "<div class='col text-center'><img width=150 height=150 src='"+image_src+"' class=img-'thumbnail'/><h5>Daun terdeteksi penyakit Black Shooty "+str(result[0][1])+"</h5></div>"
+            elif result[0][2] == 1 :
+                answer = "<div class='col text-center'><img width=150 height=150 src='"+image_src+"' class=img-'thumbnail'/><h5>Daun mangga sehat "+str(result[0][2])+"</h5></div>"
+            results.append(answer)
+            return render_template('index.html', len=len(results), results=results)            
 
 # Create a running list of result
 results = []
