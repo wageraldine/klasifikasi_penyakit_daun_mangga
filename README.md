@@ -1,1 +1,1 @@
-# Klasifikasi Penyakit daun Mangga
+# Klasifikasi Penyakit Daun Mangga
